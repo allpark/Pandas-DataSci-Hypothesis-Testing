@@ -66,4 +66,5 @@ def get_university_town_names():
   
 # to do: complete get recession function
 def getRecession(year):
+    pass
   
