@@ -2,9 +2,21 @@ import pandas as pd
 import numpy as np
 from scipy.stats import ttest_ind
 
+# Hypothesis Testing Using Numpy and Pandas
+
+#Definitions:
+
+#     * A quarter is a specific three month period, Q1 is January through March, Q2 is April through June, Q3 is July through September, Q4 is October through December.
+#     * A recession is defined as starting with two consecutive quarters of GDP decline, and ending with two consecutive quarters of GDP growth.
+#     * A university town is a city which has a high percentage of university students compared to the total population of the city.
+
+# Hypothesis
+
+# University towns have their mean housing prices less effected by recessions.
+# Run a t-test to compare the ratio of the mean price of houses in university towns the quarter before the recession starts compared to the recession bottom. 
+
 # create a dictionary for converting short-hand state names to full name 
 states = {'OH': 'Ohio', 'KY': 'Kentucky', 'AS': 'American Samoa', 'NV': 'Nevada', 'WY': 'Wyoming', 'NA': 'National', 'AL': 'Alabama', 'MD': 'Maryland', 'AK': 'Alaska', 'UT': 'Utah', 'OR': 'Oregon', 'MT': 'Montana', 'IL': 'Illinois', 'TN': 'Tennessee', 'DC': 'District of Columbia', 'VT': 'Vermont', 'ID': 'Idaho', 'AR': 'Arkansas', 'ME': 'Maine', 'WA': 'Washington', 'HI': 'Hawaii', 'WI': 'Wisconsin', 'MI': 'Michigan', 'IN': 'Indiana', 'NJ': 'New Jersey', 'AZ': 'Arizona', 'GU': 'Guam', 'MS': 'Mississippi', 'PR': 'Puerto Rico', 'NC': 'North Carolina', 'TX': 'Texas', 'SD': 'South Dakota', 'MP': 'Northern Mariana Islands', 'IA': 'Iowa', 'MO': 'Missouri', 'CT': 'Connecticut', 'WV': 'West Virginia', 'SC': 'South Carolina', 'LA': 'Louisiana', 'KS': 'Kansas', 'NY': 'New York', 'NE': 'Nebraska', 'OK': 'Oklahoma', 'FL': 'Florida', 'CA': 'California', 'CO': 'Colorado', 'PA': 'Pennsylvania', 'DE': 'Delaware', 'NM': 'New Mexico', 'RI': 'Rhode Island', 'MN': 'Minnesota', 'VI': 'Virgin Islands', 'NH': 'New Hampshire', 'MA': 'Massachusetts', 'GA': 'Georgia', 'ND': 'North Dakota', 'VA': 'Virginia'}
-
 
 def get_university_town_names():
     '''Returns a DataFrame of towns and the states they are in from the 
@@ -13,7 +25,6 @@ def get_university_town_names():
     columns=["State", "RegionName"]  )
     
     The following cleaning needs to be done:
-
     1. For "State", removing characters from "[" to the end.
     2. For "RegionName", when applicable, removing every character from " (" to the end.
     3. Depending on how you read the data, you may need to remove newline character '\n'. '''
@@ -22,7 +33,7 @@ def get_university_town_names():
     uni_towns = pd.DataFrame(columns=["State", "RegionName"])
     
     # open text file, read towns and clean data
-    with open("university_towns.txt") as f:
+    with open("data/university_towns.txt") as f:
         
         # create current state variable to keep track of which
         # state entries we are looking at 
@@ -55,16 +66,17 @@ def get_university_town_names():
                             "RegionName" : region
                         },
                         
-                        index = [index]
+                        index = [index],
+                        
 
                     ),
+
+                    # disable sorting 
+                    sort=False
                 
                 )
               
                 # increment index by 1 
                 index += 1
-  
-# to do: complete get recession function
-def getRecession(year):
-    pass
-  
+
+
