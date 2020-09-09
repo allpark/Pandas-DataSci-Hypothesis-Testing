@@ -80,3 +80,77 @@ def get_university_town_names():
                 index += 1
 
 
+def get_recession_start():
+    '''Returns the year and quarter of the recession start time as a 
+    string value in a format such as 2005q3'''
+    
+    gdp = pd.read_excel("gdplev.xls", skiprows=8, header=None, 
+                        usecols = [4,5,6]
+    )
+    gdp.columns = ["Quarter","GDP Billions", "GDP Billions Chained"]
+    
+    # start year for mask clipping
+    start_from = 2000
+    
+    # create mask by stripping q1-4 from years and then performing bool operations 
+    mask = gdp["Quarter"].str.slice(stop=-2).astype("int")>=start_from
+    
+    # clip data frame given mask
+    gdp  = gdp[mask]
+    
+    # start linearly searching for two consecutive negative drops in gdp where ... xn > xn+1 > xn+2  
+
+    # from the first index to the (last element-3) as we're going to be looking up three elements in one pass
+    for i in range(0, len(gdp.index)-2):
+        
+        frame0, frame1, frame2 = gdp.iloc[i], gdp.iloc[i+1], gdp.iloc[i+2]
+        
+        # use the second frame quarter as it marks the beginning of a recession
+        quarter_start = frame1["Quarter"]
+        
+        # condition must satisfy : xn > xn+1 > xn+2  
+        in_recession    = frame0["GDP Billions Chained"] > frame1["GDP Billions Chained"] > frame2["GDP Billions Chained"]
+        
+        if (in_recession):
+            return quarter_start
+        
+    return False
+
+
+def get_recession_end():
+    '''Returns the year and quarter of the recession start time as a 
+    string value in a format such as 2005q3'''
+    
+    gdp = pd.read_excel("gdplev.xls", skiprows=8, header=None, 
+                        usecols = [4,5,6]
+    )
+    gdp.columns = ["Quarter","GDP Billions", "GDP Billions Chained"]
+    
+    # get depression start year
+    start_from = int(get_recession_start()[:4])
+   
+    # create mask by stripping q1-4 from years and then performing bool operations 
+    mask = gdp["Quarter"].str.slice(stop=-2).astype("int")>=start_from
+    
+    # clip data frame given mask
+    gdp  = gdp[mask]
+
+    # from the first index to the (last element-3) as we're going to be looking up three elements in one pass
+    for i in range(0, len(gdp.index)-2):
+        
+        frame0, frame1, frame2 = gdp.iloc[i], gdp.iloc[i+1], gdp.iloc[i+2]
+        
+        # use the second frame quarter as it marks the beginning of a recession
+        quarter_end = frame2["Quarter"]
+        
+        # condition must satisfy : xn > xn+1 > xn+2  
+        out_recession    = frame0["GDP Billions Chained"] < frame1["GDP Billions Chained"] < frame2["GDP Billions Chained"]
+        
+        if (out_recession):
+            return quarter_end
+        
+    return False
+
+
+       
+  
